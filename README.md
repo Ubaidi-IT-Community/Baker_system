@@ -1,4 +1,4 @@
-# Baker Management System (Python)
+# Baker Management System (Using Python)
 
 ## Overview
 
@@ -54,7 +54,41 @@ The system is built **CLI-first** (command-line interface) for stability and tes
 ### Customer Data
 
 * Store customer name with bill
-* Foundation for future loyalty tracking
+* Customer loyalty tracking with points and tiers
+* Loyalty customer profiles and transaction history
+
+---
+
+### Receipt Export
+
+* Export receipts to text files
+* Export receipts to PDF using reportlab
+* Receipt file management for sales records
+
+---
+
+### Sales Reporting
+
+* Daily sales reports
+* Monthly sales analysis
+* Top product performance tracking
+
+---
+
+### Logging System
+
+* Activity logging for logins, billing, and exports
+* Daily log files for audit and troubleshooting
+* Owner-only log review support
+
+---
+
+### GUI Support
+
+* PyQt5 POS dashboard
+* Click-to-add product cart system
+* Modern product grid and checkout experience
+* Three color themes: Light, Dark, Modern
 
 ---
 
@@ -87,8 +121,22 @@ Baker_system/
 ├── billing/
 │   ├── bill.py             # Billing and receipts
 │
+├── receipt/
+│   ├── export.py           # Receipt file export (PDF / text)
+│
+├── reports/
+│   ├── sales.py            # Sales reporting and analytics
+│
+├── app_logging/
+│   ├── logger.py           # Application logging system
+│
 ├── customer/
 │   ├── customer.py         # Customer management (future)
+│   ├── loyalty.py          # Customer loyalty tracking
+│
+├── gui/
+│   ├── pos_dashboard.py    # PyQt POS dashboard
+│   ├── app.py              # GUI application launcher
 │
 └── utils/
     ├── helpers.py          # Utility functions
@@ -162,10 +210,22 @@ password: Owner1234@
 
 ## Usage
 
-Run the application:
+Run the console application:
 
 ```bash
 python main.py
+```
+
+Run the GUI application:
+
+```bash
+python main.py --gui
+```
+
+If you prefer direct GUI launch, you can also run:
+
+```bash
+python gui/pos_dashboard.py
 ```
 
 ### Main Menu Options
@@ -223,7 +283,7 @@ Ubaidi IT Solution
 
 ---
 
-### Phase 2 (Next)
+### Phase 2 (Completed) ✅
 
 * Receipt file export (PDF / text)
 * Inventory auto-update
@@ -232,9 +292,9 @@ Ubaidi IT Solution
 
 ---
 
-### Phase 3 (Advanced)
+### Phase 3 (Completed) ✅
 
-* GUI POS system (PyQt / Tkinter)
+* GUI POS system (PyQt)
 * Product image-based dashboard
 * Click-to-add cart system
 * Customer loyalty tracking
@@ -270,7 +330,7 @@ Ubaidi IT Solution
 * bcrypt (security)
 * Optional:
   * reportlab (PDF receipts)
-  * PyQt / Tkinter (GUI)
+  * PyQt5 (GUI)
 
 ---
 
@@ -301,7 +361,7 @@ Custom licensing can be applied for production deployment.
 
 ## Author
 
-**Ubaidi IT Solution**
+**Ubaidi IT Solution IT Community**
 Developer: Samiullah Samejo
 Email: devsamiubaidi@gmail.com
 Contact: 03420372799

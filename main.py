@@ -10,6 +10,37 @@ from inventory.products import product_manager
 from billing.bill import bill_manager
 from utils.helpers import *
 
+try:
+    from gui import POSApplication
+except ImportError:
+    POSApplication = None
+
+
+def run_gui():
+    """Run the PyQt5 GUI if available."""
+    if not POSApplication:
+        print("GUI is not available in this environment.")
+        print("Install dependencies with: pip install -r requirements.txt")
+        return False
+
+    try:
+        print("Starting GUI application...")
+        from PyQt5.QtWidgets import QApplication
+        import sys
+
+        app = QApplication(sys.argv)
+        window = POSApplication()
+        window.show()
+        print("GUI window created and shown.")
+        sys.exit(app.exec_())
+        return True
+    except Exception as e:
+        print(f"GUI failed to start: {e}")
+        print("Falling back to console mode...")
+        print()
+        return False
+
+
 def initialize_system():
     """Initialize database and default data"""
     print("Initializing Baker Management System...")
@@ -280,25 +311,42 @@ def view_bills_menu():
 
 def main():
     """Main application loop"""
-    # Initialize system
+    print("Starting Baker Management System...")
     initialize_system()
 
-    while True:
-        clear_screen()
-        print_header("Baker Shop Management System")
+    # Try to run GUI by default
+    if POSApplication:
+        print("Attempting to launch GUI...")
+        if run_gui():
+            return  # GUI ran successfully
 
-        if not auth_manager.get_current_user():
-            if not login_menu():
-                continue
-        else:
-            handle_main_menu()
+    # Console mode
+    if "--console" in sys.argv or not POSApplication:
+        if POSApplication:
+            print("GUI support is available. Launch it with: python main.py --gui")
+            input("Press Enter to continue to console mode...")
 
-        # Check if user wants to exit completely
-        if not auth_manager.get_current_user():
-            if not confirm_action("\nDo you want to exit the application?"):
-                continue
+        while True:
+            clear_screen()
+            print_header("Baker Shop Management System")
+
+            if not auth_manager.get_current_user():
+                if not login_menu():
+                    continue
             else:
-                break
+                handle_main_menu()
+
+            # Check if user wants to exit completely
+            if not auth_manager.get_current_user():
+                if not confirm_action("\nDo you want to exit the application?" ):
+                    continue
+                else:
+                    break
+    else:
+        print("GUI is not available in this environment.")
+        print("Install dependencies with: pip install -r requirements.txt")
+        print("Or run in console mode with: python main.py --console")
+        input("Press Enter to continue...")
 
 if __name__ == "__main__":
     main()

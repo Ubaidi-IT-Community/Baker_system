@@ -5,7 +5,7 @@ import os
 sys.path.append(os.path.dirname(__file__))
 
 from database.db import db
-from database.models import Product
+from database.models import Product, PaymentMethod
 
 def seed_inventory():
     """Add default inventory items to the database"""
@@ -41,6 +41,36 @@ def seed_inventory():
     
     print("\nInventory seeding complete!")
 
+def seed_payment_methods():
+    """Add default payment methods to the database"""
+    
+    # Default payment methods
+    methods = [
+        {"name": "Cash", "description": "Cash payment"},
+        {"name": "Card", "description": "Credit/Debit card payment"},
+        {"name": "Check", "description": "Check payment"},
+        {"name": "Online", "description": "Online payment"},
+    ]
+    
+    print("Adding payment methods to database...")
+    
+    for method in methods:
+        # Check if payment method already exists
+        existing_methods = db.get_all_payment_methods()
+        if any(m.name == method["name"] for m in existing_methods):
+            print(f"  ✓ {method['name']} already exists")
+            continue
+        
+        # Create and add payment method
+        payment_method = PaymentMethod(
+            name=method["name"],
+            description=method["description"]
+        )
+        db.add_payment_method(payment_method)
+        print(f"  ✓ Added {method['name']}")
+    
+    print("\nPayment methods seeding complete!")
+
 if __name__ == "__main__":
     # Initialize database if needed
     db.create_tables()
@@ -48,3 +78,6 @@ if __name__ == "__main__":
     
     # Seed inventory
     seed_inventory()
+    
+    # Seed payment methods
+    seed_payment_methods()

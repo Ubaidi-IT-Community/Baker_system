@@ -37,18 +37,40 @@ class Database:
                 )
             ''')
 
-            # Products table
+            # Categories table
+            cursor.execute('''
+                CREATE TABLE IF NOT EXISTS categories (
+                    id INTEGER PRIMARY KEY AUTOINCREMENT,
+                    name TEXT UNIQUE NOT NULL,
+                    description TEXT,
+                    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+                )
+            ''')
+
+            # Products table (updated)
             cursor.execute('''
                 CREATE TABLE IF NOT EXISTS products (
                     id INTEGER PRIMARY KEY AUTOINCREMENT,
                     name TEXT NOT NULL,
                     price REAL NOT NULL,
                     stock INTEGER NOT NULL DEFAULT 0,
-                    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+                    category_id INTEGER,
+                    min_stock INTEGER DEFAULT 5,
+                    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+                    FOREIGN KEY (category_id) REFERENCES categories (id)
                 )
             ''')
 
-            # Bills table
+            # Payment Methods table
+            cursor.execute('''
+                CREATE TABLE IF NOT EXISTS payment_methods (
+                    id INTEGER PRIMARY KEY AUTOINCREMENT,
+                    name TEXT UNIQUE NOT NULL,
+                    description TEXT
+                )
+            ''')
+
+            # Bills table (updated)
             cursor.execute('''
                 CREATE TABLE IF NOT EXISTS bills (
                     id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -56,7 +78,20 @@ class Database:
                     total_amount REAL NOT NULL,
                     discount REAL DEFAULT 0,
                     net_amount REAL NOT NULL,
+                    payment_method TEXT DEFAULT 'Cash',
                     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+                )
+            ''')
+
+            # Refunds table
+            cursor.execute('''
+                CREATE TABLE IF NOT EXISTS refunds (
+                    id INTEGER PRIMARY KEY AUTOINCREMENT,
+                    bill_id INTEGER NOT NULL,
+                    reason TEXT NOT NULL,
+                    amount REAL NOT NULL,
+                    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+                    FOREIGN KEY (bill_id) REFERENCES bills (id)
                 )
             ''')
 
@@ -72,6 +107,32 @@ class Database:
                     total REAL NOT NULL,
                     FOREIGN KEY (bill_id) REFERENCES bills (id),
                     FOREIGN KEY (product_id) REFERENCES products (id)
+                )
+            ''')
+
+            # Customers table (Phase 3: Loyalty)
+            cursor.execute('''
+                CREATE TABLE IF NOT EXISTS customers (
+                    id INTEGER PRIMARY KEY AUTOINCREMENT,
+                    name TEXT NOT NULL,
+                    email TEXT,
+                    phone TEXT,
+                    loyalty_points INTEGER DEFAULT 0,
+                    total_spent REAL DEFAULT 0,
+                    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+                )
+            ''')
+
+            # Loyalty transactions table (Phase 3)
+            cursor.execute('''
+                CREATE TABLE IF NOT EXISTS loyalty_transactions (
+                    id INTEGER PRIMARY KEY AUTOINCREMENT,
+                    customer_id INTEGER NOT NULL,
+                    points INTEGER NOT NULL,
+                    transaction_type TEXT NOT NULL CHECK(transaction_type IN ('EARNED', 'REDEEMED')),
+                    amount REAL,
+                    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+                    FOREIGN KEY (customer_id) REFERENCES customers (id)
                 )
             ''')
 
@@ -224,7 +285,7 @@ class Database:
             # Get bill items
             cursor.execute('SELECT * FROM bill_items WHERE bill_id = ?', (bill_id,))
             item_rows = cursor.fetchall()
-            bill.items = [BillItem(
+            items = [BillItem(
                 id=row['id'],
                 bill_id=row['bill_id'],
                 product_id=row['product_id'],
@@ -233,6 +294,9 @@ class Database:
                 price=row['price'],
                 total=row['total']
             ) for row in item_rows]
+            
+            bill.items = items
+            bill.bill_items = items  # Set both for compatibility
 
             return bill
 
@@ -241,6 +305,132 @@ class Database:
         with self.connect() as conn:
             cursor = conn.cursor()
             cursor.execute('SELECT * FROM bills ORDER BY created_at DESC')
+            rows = cursor.fetchall()
+            return [Bill(
+                id=row['id'],
+                customer_name=row['customer_name'],
+                total_amount=row['total_amount'],
+                discount=row['discount'],
+                net_amount=row['net_amount'],
+                created_at=datetime.fromisoformat(row['created_at'])
+            ) for row in rows]
+
+    def add_category(self, category):
+        """Add a new category"""
+        with self.connect() as conn:
+            cursor = conn.cursor()
+            cursor.execute('''
+                INSERT INTO categories (name, description)
+                VALUES (?, ?)
+            ''', (category.name, category.description))
+            conn.commit()
+            return cursor.lastrowid
+
+    def get_all_categories(self):
+        """Get all categories"""
+        from .models import Category
+        with self.connect() as conn:
+            cursor = conn.cursor()
+            cursor.execute('SELECT * FROM categories ORDER BY name')
+            rows = cursor.fetchall()
+            return [Category(
+                id=row['id'],
+                name=row['name'],
+                description=row['description']
+            ) for row in rows]
+
+    def add_payment_method(self, method):
+        """Add a payment method"""
+        with self.connect() as conn:
+            cursor = conn.cursor()
+            cursor.execute('''
+                INSERT INTO payment_methods (name, description)
+                VALUES (?, ?)
+            ''', (method.name, method.description))
+            conn.commit()
+
+    def get_all_payment_methods(self):
+        """Get all payment methods"""
+        from .models import PaymentMethod
+        with self.connect() as conn:
+            cursor = conn.cursor()
+            cursor.execute('SELECT * FROM payment_methods ORDER BY name')
+            rows = cursor.fetchall()
+            return [PaymentMethod(
+                id=row['id'],
+                name=row['name'],
+                description=row['description']
+            ) for row in rows]
+
+    def create_refund(self, refund):
+        """Create a refund for a bill"""
+        with self.connect() as conn:
+            cursor = conn.cursor()
+            cursor.execute('''
+                INSERT INTO refunds (bill_id, reason, amount)
+                VALUES (?, ?, ?)
+            ''', (refund.bill_id, refund.reason, refund.amount))
+            conn.commit()
+            return cursor.lastrowid
+
+    def get_refunds_by_bill(self, bill_id):
+        """Get all refunds for a bill"""
+        from .models import Refund
+        with self.connect() as conn:
+            cursor = conn.cursor()
+            cursor.execute('SELECT * FROM refunds WHERE bill_id = ? ORDER BY created_at DESC', (bill_id,))
+            rows = cursor.fetchall()
+            return [Refund(
+                id=row['id'],
+                bill_id=row['bill_id'],
+                reason=row['reason'],
+                amount=row['amount'],
+                created_at=datetime.fromisoformat(row['created_at'])
+            ) for row in rows]
+
+    def update_product_min_stock(self, product_id, min_stock):
+        """Update minimum stock threshold for a product"""
+        with self.connect() as conn:
+            cursor = conn.cursor()
+            cursor.execute('UPDATE products SET min_stock = ? WHERE id = ?', (min_stock, product_id))
+            conn.commit()
+
+    def get_low_stock_products(self):
+        """Get all products below minimum stock level"""
+        with self.connect() as conn:
+            cursor = conn.cursor()
+            cursor.execute('SELECT * FROM products WHERE stock <= min_stock ORDER BY stock ASC')
+            rows = cursor.fetchall()
+            return [Product(
+                id=row['id'],
+                name=row['name'],
+                price=row['price'],
+                stock=row['stock'],
+                category_id=row['category_id'],
+                min_stock=row['min_stock']
+            ) for row in rows]
+
+    def search_bills(self, search_term=None, start_date=None, end_date=None):
+        """Search bills by customer name or date range"""
+        with self.connect() as conn:
+            cursor = conn.cursor()
+            query = 'SELECT * FROM bills WHERE 1=1'
+            params = []
+
+            if search_term:
+                query += ' AND customer_name LIKE ?'
+                params.append(f'%{search_term}%')
+
+            if start_date:
+                query += ' AND DATE(created_at) >= ?'
+                params.append(start_date)
+
+            if end_date:
+                query += ' AND DATE(created_at) <= ?'
+                params.append(end_date)
+
+            query += ' ORDER BY created_at DESC'
+            cursor.execute(query, params)
             rows = cursor.fetchall()
             return [Bill(
                 id=row['id'],

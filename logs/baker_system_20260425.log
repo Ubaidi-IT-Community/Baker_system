@@ -1,0 +1,10 @@
+2026-04-25 14:27:09 - BakerSystem - INFO     - LOGIN SUCCESS: username=emp@001, role=employee
+2026-04-25 14:27:32 - BakerSystem - INFO     - LOGOUT: username=emp@001
+2026-04-25 14:28:36 - BakerSystem - INFO     - LOGIN SUCCESS: username=emp@001, role=employee
+2026-04-25 14:29:25 - BakerSystem - INFO     - BILL_CREATE: user=emp@001, customer=SamiullahSmaejo, bill_id=9, total=241.0, items=4
+2026-04-25 14:29:43 - BakerSystem - INFO     - LOGOUT: username=emp@001
+2026-04-25 14:30:10 - BakerSystem - INFO     - LOGIN SUCCESS: username=Baker@Owner.name, role=owner
+2026-04-25 14:30:32 - BakerSystem - ERROR    - ERROR: user=Baker@Owner.name, operation=CHECKOUT, error=Insufficient stock. Available: 0
+2026-04-25 14:30:34 - BakerSystem - ERROR    - ERROR: user=Baker@Owner.name, operation=CHECKOUT, error=Insufficient stock. Available: 0
+2026-04-25 14:30:49 - BakerSystem - ERROR    - ERROR: user=Baker@Owner.name, operation=CHECKOUT, error=Quantity must be positive
+2026-04-25 14:30:56 - BakerSystem - INFO     - BILL_CREATE: user=Baker@Owner.name, customer=Sami, bill_id=10, total=208.0, items=2

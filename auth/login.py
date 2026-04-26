@@ -13,7 +13,7 @@ class AuthManager:
         user = db.get_user_by_username(username)
         if user and bcrypt.checkpw(password.encode('utf-8'), user.password_hash.encode('utf-8')):
             self.current_user = user
-            return True
+            return user
         return False
 
     def logout(self):

@@ -1,0 +1,16 @@
+          Baker Shop          
+==============================
+Date: 2026-04-23   Time: 18:45
+
+Customer: Sami
+
+Item             Qty     Price
+------------------------------
+Pastries           4     15.00
+------------------------------
+Total:                   60.00
+Net Amount:              60.00
+
+Best Wishes!
+Ubaidi IT Solution
+03420372799

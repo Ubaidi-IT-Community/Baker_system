@@ -1,0 +1,7 @@
+2026-04-22 23:34:35 - BakerSystem - INFO     - SYSTEM_EVENT [STARTUP]: Baker Management System initialized
+2026-04-22 23:49:41 - BakerSystem - INFO     - SYSTEM_EVENT [STARTUP]: Baker Management System initialized
+2026-04-22 23:51:33 - BakerSystem - INFO     - LOGIN FAILED: username=emp@001, role=
+2026-04-22 23:53:58 - BakerSystem - INFO     - LOGIN FAILED: username=emp@001, role=
+2026-04-23 00:09:50 - BakerSystem - INFO     - LOGIN FAILED: username=emp@001, role=
+2026-04-23 00:09:57 - BakerSystem - INFO     - LOGIN FAILED: username=emp@001, role=
+2026-04-23 00:09:59 - BakerSystem - INFO     - LOGIN FAILED: username=emp@001, role=

@@ -1,0 +1,18 @@
+2026-04-23 00:10:56 - BakerSystem - INFO     - SYSTEM_EVENT [STARTUP]: Baker Management System initialized
+2026-04-23 00:11:39 - BakerSystem - INFO     - LOGIN SUCCESS: username=emp@001, role=employee
+2026-04-23 00:12:31 - BakerSystem - INFO     - BILL_CREATE: user=emp@001, customer=abdussajmi, bill_id=4, total=22.0, items=2
+2026-04-23 00:13:04 - BakerSystem - INFO     - BILL_CREATE: user=emp@001, customer=abdc, bill_id=5, total=15.0, items=1
+2026-04-23 00:22:01 - BakerSystem - INFO     - SYSTEM_EVENT [STARTUP]: Baker Management System initialized
+2026-04-23 00:29:26 - BakerSystem - INFO     - LOGIN SUCCESS: username=emp@001, role=employee
+2026-04-23 00:30:02 - BakerSystem - INFO     - LOGOUT: username=emp@001
+2026-04-23 11:33:41 - BakerSystem - INFO     - SYSTEM_EVENT [STARTUP]: Baker Management System initialized
+2026-04-23 11:34:33 - BakerSystem - INFO     - LOGIN FAILED: username=EMP@001, role=
+2026-04-23 11:34:54 - BakerSystem - INFO     - LOGIN SUCCESS: username=emp@001, role=employee
+2026-04-23 11:35:00 - BakerSystem - INFO     - LOGOUT: username=emp@001
+2026-04-23 11:38:06 - BakerSystem - INFO     - SYSTEM_EVENT [STARTUP]: Baker Management System initialized
+2026-04-23 11:42:14 - BakerSystem - INFO     - LOGIN SUCCESS: username=emp@001, role=employee
+2026-04-23 11:43:21 - BakerSystem - INFO     - BILL_CREATE: user=emp@001, customer=CDAA, bill_id=6, total=25.0, items=2
+2026-04-23 11:43:45 - BakerSystem - INFO     - LOGOUT: username=emp@001
+2026-04-23 11:44:27 - BakerSystem - INFO     - LOGIN SUCCESS: username=Baker@Owner.name, role=owner
+2026-04-23 11:45:19 - BakerSystem - INFO     - BILL_CREATE: user=Baker@Owner.name, customer=Sami, bill_id=7, total=60.0, items=1
+2026-04-23 11:46:10 - BakerSystem - INFO     - LOGOUT: username=Baker@Owner.name
